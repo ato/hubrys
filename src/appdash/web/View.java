@@ -1,4 +1,4 @@
-package hubrys.web;
+package appdash.web;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

@@ -1,4 +1,4 @@
-package hubrys.web;
+package appdash.web;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;

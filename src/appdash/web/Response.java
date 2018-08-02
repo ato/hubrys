@@ -1,4 +1,4 @@
-package hubrys.web;
+package appdash.web;
 
 import io.undertow.io.DefaultIoCallback;
 import io.undertow.io.Sender;

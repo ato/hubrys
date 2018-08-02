@@ -1,4 +1,4 @@
-package hubrys.web;
+package appdash.web;
 
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;

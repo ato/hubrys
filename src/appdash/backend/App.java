@@ -1,6 +1,6 @@
-package hubrys.backend;
+package appdash.backend;
 
-import hubrys.web.NotFoundException;
+import appdash.web.NotFoundException;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +84,7 @@ public class App {
     }
 
     private String jvmctl(String command) throws InterruptedException, IOException {
-        File temp = File.createTempFile("hubrys", ".stdio");
+        File temp = File.createTempFile("appdash", ".stdio");
         try {
             new ProcessBuilder("jvmctl", command, name)
                     .redirectOutput(temp)

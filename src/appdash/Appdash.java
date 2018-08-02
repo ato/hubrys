@@ -1,21 +1,16 @@
-package hubrys;
+package appdash;
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
-import hubrys.backend.App;
-import hubrys.web.*;
+import appdash.backend.App;
+import appdash.web.*;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
-import io.undertow.io.DefaultIoCallback;
-import io.undertow.io.IoCallback;
-import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.BlockingHandler;
 import io.undertow.server.handlers.form.EagerFormParsingHandler;
 import io.undertow.server.session.InMemorySessionManager;
 import io.undertow.server.session.SessionAttachmentHandler;
 import io.undertow.server.session.SessionCookieConfig;
-import io.undertow.util.Headers;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
@@ -25,7 +20,6 @@ import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.oidc.profile.OidcProfile;
 import org.pac4j.undertow.handler.CallbackHandler;
 import org.pac4j.undertow.handler.SecurityHandler;
-import org.xnio.IoUtils;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -35,7 +29,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Hubrys {
+public class Appdash {
 
     private List<String> listApps() throws IOException {
         return Files.list(Paths.get("/etc/jvmctl/apps"))
@@ -49,7 +43,7 @@ public class Hubrys {
     void run() {
         Config authConfig = initAuthConfig();
 
-        Router router = new Router("hubrys/static");
+        Router router = new Router("appdash/static");
         router.resources("/webjars", "META-INF/resources/webjars");
         router.GET("/", this::index);
         router.GET("/apps/{app}", this::overview);
@@ -66,10 +60,10 @@ public class Hubrys {
         handler = Handlers.path(handler)
                 .addExactPath("/callback", CallbackHandler.build(authConfig));
         handler = new SessionAttachmentHandler(handler,
-                new InMemorySessionManager("hubrys"),
+                new InMemorySessionManager("appdash"),
                 new SessionCookieConfig()
                         .setHttpOnly(true)
-                        .setCookieName("hubrys-session"));
+                        .setCookieName("appdash-session"));
         handler = new ErrorHandler(handler);
 
         Undertow.builder()
@@ -154,11 +148,11 @@ public class Hubrys {
     }
 
     public static void main(String args[]) {
-        new Hubrys().run();
+        new Appdash().run();
     }
 
     private View view(String name) throws IOException {
-        return new View("/hubrys/" + name + ".ftlh")
+        return new View("/appdash/" + name + ".ftlh")
                 .put("apps", listApps());
     }
 
