@@ -1,6 +1,6 @@
 # AppDash
 
-A web-based dashboard for managing [jvmctl] applications.
+A web dashboard for managing [jvmctl] applications.
 
 [jvmctl]: https://github.com/nla/jvmctl
 
