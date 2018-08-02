@@ -69,7 +69,7 @@ public class AppDash {
         handler = new ErrorHandler(handler);
 
         Undertow.builder()
-                .addHttpListener(8080, "localhost")
+                .addHttpListener(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")), "0.0.0.0")
                 .setHandler(handler)
                 .build()
                 .start();
