@@ -25,6 +25,7 @@ public class Hubrys {
                 .map(p -> p.getFileName().toString())
                 .filter(s -> s.endsWith(".conf"))
                 .map(s -> s.substring(0, s.length() - ".conf".length()))
+                .sorted()
                 .collect(Collectors.toList());
     }
 
@@ -33,7 +34,8 @@ public class Hubrys {
         router.resources("/webjars", "META-INF/resources/webjars");
         router.GET("/", this::index);
         router.GET("/apps/{app}", this::app);
-//        router.GET("/apps/{app}/logs", this::logs);
+        router.GET("/apps/{app}/config", this::config);
+        router.GET("/apps/{app}/logs", this::logs);
 
         HttpHandler handler = new BlockingHandler(router);
         Undertow.builder()
@@ -44,8 +46,15 @@ public class Hubrys {
 
 
     private View app(Request request) throws Exception {
-        App app = App.get(request.path("app")).orElseThrow(NotFoundException::new);
-        return view("app").put("app", app);
+        return view("app").put("app", App.get(request.path("app")));
+    }
+
+    private View logs(Request request) throws Exception {
+        return view("logs").put("app", App.get(request.path("app")));
+    }
+
+    private View config(Request request) throws Exception {
+        return view("config").put("app", App.get(request.path("app")));
     }
 
     private View index(Request request) throws Exception {

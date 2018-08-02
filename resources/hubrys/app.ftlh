@@ -1,16 +1,9 @@
 <#include "_common.ftlh">
 
-<@page>
-    <div class="tabs">
-        <ul>
-            <li><a href="apps/${app}">Overview</a></li>
-            <li><a href="apps/${app}/logs">Logs</a></li>
-        </ul>
-    </div>
-
+<@apppage tab="overview">
 
 <table class="table">
-    <tr><td>Version:</td><td>1.0</td></tr>
+    <tr><td>Version:</td><td>${app.version()}</td></tr>
 </table>
 
-</@page>
+</@apppage>

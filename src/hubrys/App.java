@@ -1,5 +1,7 @@
 package hubrys;
 
+import hubrys.web.NotFoundException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,15 +11,19 @@ import java.util.Optional;
 public class App {
     private final String name;
 
-    public static Optional<App> get(String name) {
+    public static App get(String name) throws NotFoundException {
         if (!Files.exists(Paths.get("/etc/jvmctl/apps/" + name + ".conf"))) {
-            return Optional.empty();
+            throw new NotFoundException();
         }
-        return Optional.of(new App(name));
+        return new App(name);
     }
 
     private App(String name) {
         this.name = name;
+    }
+
+    public String name() {
+        return name;
     }
 
     private Path dir() {
@@ -40,5 +46,10 @@ public class App {
             e.printStackTrace();
         }
         return "unknown";
+    }
+
+    public String config() throws IOException {
+        return String.join("\n", Files.readAllLines(Paths.get("/etc/jvmctl/apps/" + name + ".conf")));
+
     }
 }
