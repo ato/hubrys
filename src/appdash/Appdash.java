@@ -19,6 +19,7 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.oidc.profile.OidcProfile;
 import org.pac4j.undertow.handler.CallbackHandler;
+import org.pac4j.undertow.handler.LogoutHandler;
 import org.pac4j.undertow.handler.SecurityHandler;
 
 import java.io.IOException;
@@ -58,6 +59,7 @@ public class Appdash {
         handler = new EagerFormParsingHandler(handler);
         handler = SecurityHandler.build(handler, authConfig, "OidcClient", "developer");
         handler = Handlers.path(handler)
+                .addExactPath("/logout", new LogoutHandler(authConfig))
                 .addExactPath("/callback", CallbackHandler.build(authConfig));
         handler = new SessionAttachmentHandler(handler,
                 new InMemorySessionManager("appdash"),

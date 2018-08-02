@@ -1,35 +1,56 @@
-<#macro page title>
+<#macro page title="Appdash">
     <!doctype html>
     <head>
         <meta charset="utf-8">
         <base href="/">
-        <title>${title!"Appdash"}</title>
+        <title>${title}</title>
         <link rel="stylesheet" href="webjars/bulma/0.7.1/css/bulma.min.css">
     </head>
     <body>
-        <div class="container section">
-            <div class="columns">
-                <div class="column is-2 is-sidebar-menu is-hidden-mobile">
-                    <aside class="menu">
-                        <p class="menu-label">
-                            Apps
-                        </p>
-                        <ul class="menu-list">
-                <#list apps as appName>
-                    <li><a href="apps/${appName}"
-                        <#if app?? && app.name() == appName>class="is-active"</#if>>
-                        ${appName}</a></li>
-                </#list>
-                        </ul>
-                    </aside>
+        <div class="container">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href=".">
+                        <strong>AppDash</strong>
+                    </a>
                 </div>
-                <div class="column">
-                    <#assign flash = request.flash()!"">
-                    <#if flash?has_content>
-                        <div class="notification is-info" style="white-space: pre-wrap">${flash}</div>
-                    </#if>
+                <div class="navbar-menu">
+                    <div class="navbar-end">
+                        <!--
+                        <div class="navbar-item">
+                            <div class="field is-grouped">
+                                <p class="control">
+                                <form action="logout" method="post">
+                                    <button class="button" type="submit">Logout</button>
+                                </form>
+                                </p>
+                            </div>
+                        </div>
+                        -->
+                    </div>
+                </div>
+            </nav>
+            <div class="">
+                <div class="columns">
+                    <div class="column is-2 is-sidebar-menu is-hidden-mobile">
+                        <aside class="menu">
+                            <ul class="menu-list">
+                                <#list apps as appName>
+                                    <li><a href="apps/${appName}"
+                                        <#if app?? && app.name() == appName>class="is-active"</#if>>
+                                        ${appName}</a></li>
+                                </#list>
+                            </ul>
+                        </aside>
+                    </div>
+                    <div class="column">
+                        <#assign flash = request.flash()!"">
+                        <#if flash?has_content>
+                            <div class="notification is-info" style="white-space: pre-wrap">${flash}</div>
+                        </#if>
 
-                    <#nested>
+                        <#nested>
+                    </div>
                 </div>
             </div>
         </div>
