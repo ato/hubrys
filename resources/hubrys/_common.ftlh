@@ -1,7 +1,9 @@
-<#macro page>
+<#macro page title>
     <!doctype html>
     <head>
+        <meta charset="utf-8">
         <base href="/">
+        <title>${title!"Appdash"}</title>
         <link rel="stylesheet" href="webjars/bulma/0.7.1/css/bulma.min.css">
     </head>
     <body>
@@ -21,14 +23,21 @@
                         </ul>
                     </aside>
                 </div>
-                <div class="column"><#nested></div>
+                <div class="column">
+                    <#assign flash = request.flash()!"">
+                    <#if flash?has_content>
+                        <div class="notification is-info" style="white-space: pre-wrap">${flash}</div>
+                    </#if>
+
+                    <#nested>
+                </div>
             </div>
         </div>
     </body>
 </#macro>
 
 <#macro apppage tab>
-    <@page>
+    <@page title="${tab?capitalize} - ${app.name()?capitalize}">
         <div class="tabs">
             <ul>
                 <li<#if tab == "overview"> class="is-active"</#if>><a href="apps/${app.name()}">Overview</a></li>

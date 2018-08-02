@@ -8,10 +8,6 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.util.Headers;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.function.Consumer;
-
 import static io.undertow.Handlers.resource;
 
 public class Router implements HttpHandler {
@@ -24,7 +20,18 @@ public class Router implements HttpHandler {
     }
 
     public void GET(String pattern, Handler handler) {
-        routing.get(pattern, exchange -> handler.handle(new Request(exchange)).send(exchange));
+        routing.get(pattern, wrap(handler));
+    }
+
+    public void POST(String pattern, Handler handler) {
+        routing.post(pattern, wrap(handler));
+    }
+
+    private HttpHandler wrap(Handler handler) {
+        return exchange -> {
+            Request request = new Request(exchange);
+            handler.handle(request).send(request);
+        };
     }
 
     public void resources(String prefix, String resourcePath) {
@@ -40,12 +47,6 @@ public class Router implements HttpHandler {
             exchange.setStatusCode(404);
             exchange.getResponseHeaders().add(Headers.CONTENT_TYPE, "text/plain");
             exchange.getResponseSender().send("404 Not Found");
-        } catch (Exception e) {
-            e.printStackTrace();
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-            exchange.setStatusCode(500);
         }
     }
 }

@@ -37,8 +37,9 @@ public class View implements Response {
     }
 
     @Override
-    public void send(HttpServerExchange exchange) throws IOException, TemplateException {
-        model.put("exchange", exchange);
+    public void send(Request request) throws IOException, TemplateException {
+        HttpServerExchange exchange = request.exchange();
+        model.put("request", request);
         StringWriter buffer = new StringWriter();
         Template template = freemarker.getTemplate(name);
         template.process(model, buffer);
