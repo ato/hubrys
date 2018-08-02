@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Appdash {
+public class AppDash {
 
     private List<String> listApps() throws IOException {
         return Files.list(Paths.get("/etc/jvmctl/apps"))
@@ -150,7 +150,7 @@ public class Appdash {
     }
 
     public static void main(String args[]) {
-        new Appdash().run();
+        new AppDash().run();
     }
 
     private View view(String name) throws IOException {
