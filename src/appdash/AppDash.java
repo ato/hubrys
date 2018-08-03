@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,13 +100,13 @@ public class AppDash {
     private Response stop(Request request) throws Exception {
         App app = App.get(request.path("app"));
         request.flash(app.stop());
-        return seeOverview(app);
+        return Response.seeOther("/apps/" + app.name() + "/logs");
     }
 
     private Response restart(Request request) throws Exception {
         App app = App.get(request.path("app"));
         request.flash(app.restart());
-        return seeOverview(app);
+        return Response.seeOther("/apps/" + app.name() + "/logs");
     }
 
     private Config initAuthConfig() {
@@ -138,10 +137,6 @@ public class AppDash {
             app.saveConfig(config, profile.getDisplayName(), profile.getEmail());
             request.flash("Configuration updated. Please restart or deploy.");
         }
-        return seeOverview(app);
-    }
-
-    private Response seeOverview(App app) {
         return Response.seeOther("/apps/" + app.name());
     }
 
