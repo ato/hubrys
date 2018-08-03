@@ -8,6 +8,6 @@
             var frame = document.getElementById("log-frame");
             frame.contentWindow.scrollTo(0, frame.scrollHeight);
         }
-        body.addEventListener("load", scrollToBottom, false);
+        document.getElementsByTagName("body")[0].addEventListener("load", scrollToBottom, false);
     </script>
 </@apppage>
