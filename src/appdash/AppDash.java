@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AppDash {
+    private final int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
+    private final String baseUrl = System.getenv().getOrDefault("BASE_URL", "http://localhost:" + port)
+            .replaceFirst("/+$", "");
 
     private List<String> listApps() throws IOException {
         return Files.list(Paths.get("/etc/jvmctl/apps"))
@@ -69,7 +72,7 @@ public class AppDash {
         handler = new ErrorHandler(handler);
 
         Undertow.builder()
-                .addHttpListener(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")), "0.0.0.0")
+                .addHttpListener(port, "0.0.0.0")
                 .setHandler(handler)
                 .build()
                 .start();
@@ -110,7 +113,7 @@ public class AppDash {
         OidcClient<OidcProfile> oidcClient = new OidcClient<>(oidcConfiguration);
         oidcClient.setAuthorizationGenerator((context, profile) -> {profile.addRole("developer"); return profile;});
 
-        Clients clients = new Clients("http://localhost:8080/callback", oidcClient);
+        Clients clients = new Clients(baseUrl + "/callback", oidcClient);
         Config config = new Config(clients);
         config.addAuthorizer("developer", new RequireAnyRoleAuthorizer("developer"));
         return config;
