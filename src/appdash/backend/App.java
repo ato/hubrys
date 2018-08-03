@@ -100,8 +100,8 @@ public class App {
         }
     }
 
-    public Path stdioLog() {
-        return Paths.get("/logs/" + name + "/stdio.log");
+    public Path logPath(String log) {
+        return Paths.get("/logs/" + name + "/" + log);
     }
 
     public long pid() throws IOException {
@@ -120,5 +120,13 @@ public class App {
             pid = Long.parseLong(line.substring("MainPID=".length()));
             return pid;
         }
+    }
+
+    public void deploy() throws IOException {
+        new ProcessBuilder("jvmctl", "deploy", name)
+                .inheritIO()
+                .redirectOutput(logPath("deploy.log").toFile())
+                .redirectErrorStream(true)
+                .start();
     }
 }

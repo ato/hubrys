@@ -45,7 +45,7 @@ public class AppDash {
                 .collect(Collectors.toList());
     }
 
-    void run() {
+    private void run() {
         Config authConfig = initAuthConfig();
 
         Router router = new Router("appdash/static");
@@ -56,8 +56,11 @@ public class AppDash {
         router.POST("/apps/{app}/config", this::saveConfig);
         router.POST("/apps/{app}/restart", this::restart);
         router.POST("/apps/{app}/stop", this::stop);
+        router.GET("/apps/{app}/deploy", this::showDeploy);
+        router.POST("/apps/{app}/deploy", this::performDeploy);
         router.GET("/apps/{app}/logs", this::logs);
-        router.GET("/apps/{app}/logs/stdio.log", this::stdioLog);
+        router.GET("/apps/{app}/logs/stdio.log", request -> sendLog(request, "stdio.log"));
+        router.GET("/apps/{app}/logs/deploy.log", request -> sendLog(request, "deploy.log"));
 
         HttpHandler handler = new BlockingHandler(router);
         handler = new EagerFormParsingHandler(handler);
@@ -79,10 +82,20 @@ public class AppDash {
                 .start();
     }
 
-    private Response stdioLog(Request request) throws NotFoundException, IOException {
+    private Response performDeploy(Request request) throws NotFoundException, IOException {
+        App app = App.get(request.path("app"));
+        app.deploy();
+        return Response.seeOther("/apps/" + app.name() + "/deploy");
+    }
+
+    private Response showDeploy(Request request) throws IOException, NotFoundException {
+        return view("deploy").put("app", App.get(request.path("app")));
+    }
+
+    private Response sendLog(Request request, String log) throws NotFoundException, IOException {
         App app = App.get(request.path("app"));
         int windowSize = 128 * 1024;
-        try (FileChannel channel = FileChannel.open(app.stdioLog())) {
+        try (FileChannel channel = FileChannel.open(app.logPath(log))) {
             long position = channel.size() - windowSize;
             if (position > 0) {
                 channel.position(position);

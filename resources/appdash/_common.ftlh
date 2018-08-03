@@ -63,6 +63,7 @@
             <ul>
                 <li<#if tab == "overview"> class="is-active"</#if>><a href="apps/${app.name()}">Overview</a></li>
                 <li<#if tab == "config"> class="is-active"</#if>><a href="apps/${app.name()}/config">Config</a></li>
+                <li<#if tab == "deploy"> class="is-active"</#if>><a href="apps/${app.name()}/deploy">Deploy</a></li>
                 <li<#if tab == "logs"> class="is-active"</#if>><a href="apps/${app.name()}/logs">Logs</a></li>
             </ul>
         </div>
