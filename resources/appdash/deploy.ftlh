@@ -14,7 +14,7 @@
         window.setInterval("reloadLog();", 2000);
 
         function reloadLog() {
-            document.getElementById("log-frame").location.reload();
+            document.getElementById("log-frame").contentWindow.location.reload();
         }
     </script>
 </@apppage>
