@@ -1,7 +1,6 @@
 package appdash.backend;
 
 import appdash.web.NotFoundException;
-import com.sun.tools.attach.VirtualMachine;
 
 import java.io.BufferedReader;
 import java.io.File;
