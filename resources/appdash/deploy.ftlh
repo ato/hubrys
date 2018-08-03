@@ -8,6 +8,13 @@
             </form>
         </div>
     </div>
-    <iframe id="log-frame" src="apps/${app.name()}/logs/deploy.log" class="box" style="width: 100%; height: 100%">
+    <iframe name="log" src="apps/${app.name()}/logs/deploy.log" class="box" style="width: 100%; height: 100%">
     </iframe>
+    <script>
+        window.setInterval("reloadLog();", 2000);
+
+        function reloadLog() {
+            document.frames["log"].location.reload();
+        }
+    </script>
 </@apppage>
