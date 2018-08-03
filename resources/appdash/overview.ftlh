@@ -9,7 +9,7 @@
     </tr>
     <tr>
         <td>PID:</td>
-        <td>${app.pid()}</td>
+        <td>${app.pid()?c}</td>
     </tr>
 </table>
 
