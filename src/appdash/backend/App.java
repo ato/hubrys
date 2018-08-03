@@ -1,9 +1,12 @@
 package appdash.backend;
 
 import appdash.web.NotFoundException;
+import com.sun.tools.attach.VirtualMachine;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class App {
     private final String name;
+    private long pid = -1;
 
     public static App get(String name) throws NotFoundException {
         if (!Files.exists(configFile(name))) {
@@ -99,5 +103,23 @@ public class App {
 
     public Path stdioLog() {
         return Paths.get("/logs/" + name + "/stdio.log");
+    }
+
+    public long pid() throws IOException {
+        if (pid != -1) {
+            return pid;
+        }
+        Process p = new ProcessBuilder("systemctl", "show", "-p", "MainPID", "jvm:" + name)
+                .inheritIO()
+                .redirectOutput(ProcessBuilder.Redirect.PIPE)
+                .start();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+            String line = reader.readLine();
+            if (line == null || !line.startsWith("MainPID=")) {
+                throw new IOException("Unexpected systemctl output");
+            }
+            pid = Long.parseLong(line.substring("MainPID=".length()));
+            return pid;
+        }
     }
 }

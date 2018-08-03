@@ -7,6 +7,10 @@
         <td>Version:</td>
         <td>${app.version()}</td>
     </tr>
+    <tr>
+        <td>PID:</td>
+        <td>${app.pid()}</td>
+    </tr>
 </table>
 
 <div class="field is-grouped">
