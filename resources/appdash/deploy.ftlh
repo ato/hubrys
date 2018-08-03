@@ -1,6 +1,6 @@
 <#include "_common.ftlh">
 
-<@apppage tab="logs">
+<@apppage tab="deploy">
     <div class="field is-grouped">
         <div class="control">
             <form action="apps/${app.name()}/deploy" method="post">
