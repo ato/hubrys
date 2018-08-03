@@ -11,6 +11,7 @@ import io.undertow.server.handlers.form.EagerFormParsingHandler;
 import io.undertow.server.session.InMemorySessionManager;
 import io.undertow.server.session.SessionAttachmentHandler;
 import io.undertow.server.session.SessionCookieConfig;
+import io.undertow.util.Headers;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
@@ -23,6 +24,7 @@ import org.pac4j.undertow.handler.LogoutHandler;
 import org.pac4j.undertow.handler.SecurityHandler;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -80,15 +82,19 @@ public class AppDash {
 
     private Response stdioLog(Request request) throws NotFoundException, IOException {
         App app = App.get(request.path("app"));
-        try {
-            FileChannel channel = FileChannel.open(app.stdioLog());
-            long position = channel.size() - 128 * 1024;
+        int windowSize = 128 * 1024;
+        try (FileChannel channel = FileChannel.open(app.stdioLog())) {
+            long position = channel.size() - windowSize;
             if (position > 0) {
                 channel.position(position);
             }
-            return Response.sendFile(channel);
-        } catch (NoSuchFileException e) {
-            throw new NotFoundException();
+            ByteBuffer buffer = ByteBuffer.allocate(windowSize);
+            channel.read(buffer);
+            buffer.flip();
+            return request1 -> {
+                request1.exchange().getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
+                request1.exchange().getResponseSender().send(buffer);
+            };
         }
     }
 
@@ -111,7 +117,10 @@ public class AppDash {
         oidcConfiguration.setDiscoveryURI(System.getenv("OIDC_URL"));
         oidcConfiguration.setClientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
         OidcClient<OidcProfile> oidcClient = new OidcClient<>(oidcConfiguration);
-        oidcClient.setAuthorizationGenerator((context, profile) -> {profile.addRole("developer"); return profile;});
+        oidcClient.setAuthorizationGenerator((context, profile) -> {
+            profile.addRole("developer");
+            return profile;
+        });
 
         Clients clients = new Clients(baseUrl + "/callback", oidcClient);
         Config config = new Config(clients);
